@@ -17,17 +17,16 @@ Tasks:
       dates for the GlobalCyclingNetwork and globalmtb YouTube channels to a database[1]. We
       only want to store videos that match the filter criteria[2].
 
-      The above must be done using the Youtube data API v3. An API key has been provided
-      for you to use:
+   The above must be done using the Youtube data API v3. An API key has been provided
+   for you to use:
 
-      **AIzaSyAsmKbjsSAXARfIZ9XO0RmvU4iLMnU3dCc**
 
       1. **Storage** of information must use the provided SQL database structure (**youtube.sql**).
       2. We are only interested in storing videos with titles that match the filter criteria. The
          criteria **must** be read from the provided file (**search_filter**). Filtering should be case
          insensitive. How you implement this filter is up to you.
 
-   1. Expose an API endpoint that will fetch the results from 1.i.
+1. Expose an API endpoint that will fetch the results from 1.i.
 
 2. Expose an API endpoint which queries the searched data from 1 by ID.
 3. Expose an API endpoint which removes an ID from the data store.
