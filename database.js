@@ -4,9 +4,9 @@ const mysql = require("mysql")
 const fs = require("fs").promises
 
 const connection = mysql.createConnection({
-  host: "35.224.4.167",
-  user: "playsports",
-  password: "initd33p",
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
   multipleStatements: true
 })
 
@@ -17,17 +17,22 @@ connection.connect(err => {
 
   // create database if not exist
   createDb()
+    .then(() => {
+      // switch to database
+      connection.changeUser({ database: process.env.MYSQL_DATABASE }, err => {
+        if (err) {
+          console.error(err)
+        }
+      })
 
-  // switch to database
-  connection.changeUser({ database: process.env.MYSQL_DATABASE }, err => {
-    if (err) {
-      console.error(err)
-    }
-
-    console.log(
-      "Successfully switched database to " + process.env.MYSQL_DATABASE
-    )
-  })
+      console.log(
+        "Successfully switched database to " + process.env.MYSQL_DATABASE
+      )
+    })
+    .catch(err => {
+      console.log(err)
+      process.exit(1)
+    })
 
   console.log("Connected as thread id: " + connection.threadId)
 })
@@ -40,9 +45,7 @@ const createDb = async () => {
     const sql = await fs.readFile("./data/youtube.sql")
 
     // create database
-    const res = await query(sql.toString())
-
-    // console.log(res)
+    return await query(sql.toString())
   } catch (err) {
     throw error
   }
