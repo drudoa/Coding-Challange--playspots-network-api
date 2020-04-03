@@ -44,7 +44,7 @@ const createDb = async () => {
     // load sql file
     const sql = await fs.readFile("./data/youtube.sql")
 
-    // create database
+    // create database/tables form sql file
     return await query(sql.toString())
   } catch (err) {
     throw error
