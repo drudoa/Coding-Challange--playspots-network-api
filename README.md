@@ -27,7 +27,7 @@ Tasks:
          criteria **must** be read from the provided file (**search_filter**). Filtering should be case
          insensitive. How you implement this filter is up to you.
 
-   1. Expose an API endpoint that will fetch the results from 1a.
+   1. Expose an API endpoint that will fetch the results from 1.i.
 
 2. Expose an API endpoint which queries the searched data from 1 by ID.
 3. Expose an API endpoint which removes an ID from the data store.
