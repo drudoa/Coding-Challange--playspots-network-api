@@ -16,9 +16,8 @@ Tasks:
 1. 1. Expose an API endpoint, that when hit will store youtube video **titles** and **publishedAt**
       dates for the GlobalCyclingNetwork and globalmtb YouTube channels to a database[1]. We
       only want to store videos that match the filter criteria[2].
-
-   The above must be done using the Youtube data API v3. An API key has been provided
-   for you to use:
+      The above must be done using the Youtube data API v3. An API key has been provided
+      for you to use:
 
 
       1. **Storage** of information must use the provided SQL database structure (**youtube.sql**).
