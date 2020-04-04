@@ -12,7 +12,7 @@ const state = {
   error: null
 }
 
-const channelIds = [
+const channels = [
   {
     name: "GlobalCyclingNetwork",
     id: "UCuTaETsuCOkJ0H_GAztWt0Q",
@@ -46,21 +46,23 @@ app.get("/api/videos/populate", (req, res) => {
   query("TRUNCATE TABLE `videos`").catch(err => console.error(err))
 
   // this method is recursive and will take some time
-  api
-    .getChannelVideos("UC_A--fhX5gea0i4UtpD99Gg")
-    .then(data => {
-      // put results into database
-      const sql = "INSERT INTO `videos` (id, title, date) VALUES ?"
-      return query(sql, [data])
-    })
-    .catch(err => {
-      console.error(err.message)
-      state.error = err.message
-    })
-    .finally(() => {
-      state.isPopulating = false
-      console.log("database population finnished")
-    })
+  channels.forEach(channel => {
+    api
+      .getChannelVideos(channel.playlistId)
+      .then(data => {
+        // put results into database
+        const sql = "INSERT INTO `videos` (id, title, date) VALUES ?"
+        return query(sql, [data])
+      })
+      .catch(err => {
+        console.error(err.message)
+        state.error = err.message
+      })
+      .finally(() => {
+        state.isPopulating = false
+        console.log("database population finnished")
+      })
+  })
 
   return res.json({
     message:
@@ -81,6 +83,13 @@ app.get("/api/videos", (req, res) => {
   const sql = "SELECT * FROM `videos` LIMIT 100"
   query(sql)
     .then(data => res.json({ data }))
+    .catch(err => res.status(500).json({ error: err }))
+})
+
+app.get("/api/videos/count", (req, res) => {
+  const sql = "SELECT COUNT(*) AS count FROM `videos`"
+  query(sql)
+    .then(data => res.json({ totalVideos: data[0].count }))
     .catch(err => res.status(500).json({ error: err }))
 })
 
