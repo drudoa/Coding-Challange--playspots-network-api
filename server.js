@@ -80,16 +80,15 @@ app.get("/api/videos/populate/status", (req, res) => {
 
 // gets all stored videos
 app.get("/api/videos", (req, res) => {
-  const sql = "SELECT * FROM `videos` LIMIT 100"
+  const sql =
+    "SELECT COUNT(*) AS totalVideos FROM `videos`;SELECT * FROM `videos` LIMIT 100"
   query(sql)
-    .then(data => res.json({ data }))
-    .catch(err => res.status(500).json({ error: err }))
-})
-
-app.get("/api/videos/count", (req, res) => {
-  const sql = "SELECT COUNT(*) AS count FROM `videos`"
-  query(sql)
-    .then(data => res.json({ totalVideos: data[0].count }))
+    .then(data =>
+      res.json({
+        total: data[0][0].totalVideos,
+        videos: data[1]
+      })
+    )
     .catch(err => res.status(500).json({ error: err }))
 })
 
