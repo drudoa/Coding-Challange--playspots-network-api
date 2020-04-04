@@ -85,7 +85,7 @@ module.exports = class YouTube {
     return jsonResults.items.map(res => [
       res.id,
       res.snippet.title,
-      moment(res.snippet.publishedAt).format("YYYY-MM-DD HH:MI:SS")
+      moment(res.snippet.publishedAt).format("YYYY-MM-DD HH:MM:SS")
     ])
   }
 }
