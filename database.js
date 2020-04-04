@@ -1,4 +1,3 @@
-require("dotenv").config()
 const { promisify } = require("util")
 const mysql = require("mysql")
 const fs = require("fs").promises
