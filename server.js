@@ -1,5 +1,6 @@
 require("dotenv").config()
 const express = require("express")
+const bodyParser = require("body-parser")
 const { query } = require("./database")
 const YouTube = require("./YouTube")
 
@@ -24,6 +25,8 @@ const channels = [
     playlistId: "UU_A--fhX5gea0i4UtpD99Gg"
   }
 ]
+
+app.use(bodyParser.json())
 
 //  search YouTube for matching videos and store in db.
 app.get("/api/videos/populate", (req, res) => {
@@ -50,6 +53,8 @@ app.get("/api/videos/populate", (req, res) => {
     api
       .getChannelVideos(channel.playlistId)
       .then(data => {
+        // filter data by search_filter file
+
         // put results into database
         const sql = "INSERT INTO `videos` (id, title, date) VALUES ?"
         return query(sql, [data])
@@ -93,15 +98,36 @@ app.get("/api/videos", (req, res) => {
 })
 
 // get a stored video by id
-app.get("/api/videos/:id", (req, res) => res.json({ message: "hello world" }))
+app.get("/api/videos/:id", (req, res) => {
+  if (!req.params.id) return res.status(400).json({ message: "invalid id" })
+
+  const sql = "SELECT * FROM `videos` WHERE `id` = ?"
+  query(sql, req.params.id)
+    .then(data => res.json({ result: data[0] }))
+    .catch(err => res.status(500).json({ error: err }))
+})
 
 // find a stored video by search term
-app.post("/api/videos", (req, res) => res.json({ message: "hello world" }))
+app.post("/api/videos", (req, res) => {
+  if (!req.body.searchTerm)
+    return res.status(400).json({ message: "invalid search term" })
+
+  const sql =
+    "SELECT id, title FROM `videos` WHERE MATCH (title) AGAINST (? IN NATURAL LANGUAGE MODE)"
+  query(sql, req.body.searchTerm)
+    .then(data => res.json({ total: data.length, results: data }))
+    .catch(err => res.status(500).json({ error: err }))
+})
 
 // removes a stored video by id
-app.delete("/api/videos/:id", (req, res) =>
-  res.json({ message: "hello world" })
-)
+app.delete("/api/videos/:id", (req, res) => {
+  if (!req.params.id) return res.status(400).json({ message: "invalid id" })
+
+  const sql = "DELETE FROM `videos` WHERE `id` = ?"
+  query(sql, req.params.id)
+    .then(data => res.json({ message: `Video ${req.params.id} deleted.` }))
+    .catch(err => res.status(500).json({ error: err }))
+})
 
 app.listen(port, () => {
   console.log(`App listening on port: ${port}`)
