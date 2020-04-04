@@ -1,68 +1,71 @@
 const fetch = require("node-fetch")
 const endpoint = "https://www.googleapis.com/youtube/v3/"
 
-const orderTypes = {
-  DATE: "date",
-  RATING: "rating",
-  RELEVANCE: "relevance",
-  TITLE: "title",
-  VIEWS: "viewCount"
-}
-
-const maxDefault = 5
-
 module.exports = class YouTube {
   constructor(apiKey) {
     if (!apiKey) throw new Error("An api key is required!")
     this.apiKey = apiKey
-    this.order = orderTypes.DATE
-    this.maxResults = maxDefault
+    this.count = 0
   }
 
-  // note youtube api has a max result of 50, this param will make multiple api calls until this limit is hit or quota reached
-  set setMaxResults(value) {
-    if (Number.isInteger(value)) {
-      this.maxResults = value
-    }
-  }
-
-  async getChannelVideos(channelId, options = null) {
+  async getChannelVideos(channelId) {
     if (!channelId) return null
 
-    // validate any options
-    if (typeof options === "array") {
-      this.maxResults = options.maxResults || maxDefault
+    // get a playlist id for channel
 
-      if (options.order) {
-        if (orderTypes.hasOwnProperty(options.order)) {
-          this.order = options.order
-        } else {
-          throw new Error("Invalid order type")
-        }
-      }
+    // get all videos in playlist
+    const queryParams = {
+      part: "snippet",
+      playlistId: "UU_A--fhX5gea0i4UtpD99Gg",
+      key: this.apiKey,
+      maxResults: 50
     }
 
     try {
-      const query = await fetch(this._buildQueryString(channelId))
-      const result = await query.json()
+      return await this._recursiveExec(queryParams)
+    } catch (error) {
+      // bubble up errors
+      throw error
+    }
+  }
 
-      return this._formatResults(result)
+  // recursively traverse google api until next page token is null
+  async _recursiveExec(queryParams) {
+    // make request
+    const result = await this._execQuery(queryParams)
+
+    if (result.next) {
+      // make another request and append to previous results
+      return result.data.concat(
+        await this._recursiveExec({ ...queryParams, pageToken: result.next })
+      )
+    } else {
+      // bubble up errors
+      return result.data
+    }
+  }
+
+  async _execQuery(queryParams) {
+    const query = this._buildQueryString("playlistItems", queryParams)
+
+    try {
+      const result = await fetch(query)
+      const json = await result.json()
+
+      // this.count++
+      // console.log({ [this.count]: json.nextPageToken })
+
+      return {
+        data: this._formatPlaylistResults(json),
+        next: json.nextPageToken || null
+      }
     } catch (error) {
       throw error
     }
   }
 
-  // create a request url with query params for channel
-  _buildQueryString(channelId) {
-    const queryParams = {
-      type: "video",
-      order: this.order,
-      part: "snippet",
-      channelId,
-      key: this.apiKey,
-      maxResults: this.maxResults
-    }
-
+  // create a request url with query params
+  _buildQueryString(apiType, queryParams) {
     const queryParamsString = Object.entries(queryParams).reduce(
       (acc, [key, value], idx) => {
         if (idx > 0) {
@@ -71,17 +74,17 @@ module.exports = class YouTube {
 
         return acc + `${key}=${value}`
       },
-      "search?"
+      `${apiType}?`
     )
 
     return endpoint + queryParamsString
   }
 
-  _formatResults(jsonResults) {
-    return jsonResults.items.map(res => ({
-      videoId: res.id.videoId,
-      title: res.snippet.title,
-      publishedAt: res.snippet.publishedAt
-    }))
+  _formatPlaylistResults(jsonResults) {
+    return jsonResults.items.map(res => [
+      res.id,
+      res.snippet.title,
+      res.snippet.publishedAt
+    ])
   }
 }
