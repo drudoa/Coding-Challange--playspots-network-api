@@ -9,15 +9,15 @@ module.exports = class YouTube {
     this.count = 0
   }
 
-  async getChannelVideos(channelId) {
-    if (!channelId) return null
+  async getChannelVideos(playlistId) {
+    if (!playlistId) return null
 
     // get a playlist id for channel
 
     // get all videos in playlist
     const queryParams = {
       part: "snippet",
-      playlistId: "UU_A--fhX5gea0i4UtpD99Gg",
+      playlistId,
       key: this.apiKey,
       maxResults: 50
     }
