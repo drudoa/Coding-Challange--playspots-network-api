@@ -1,5 +1,6 @@
 const fetch = require("node-fetch")
 const endpoint = "https://www.googleapis.com/youtube/v3/"
+const moment = require("moment")
 
 module.exports = class YouTube {
   constructor(apiKey) {
@@ -84,7 +85,7 @@ module.exports = class YouTube {
     return jsonResults.items.map(res => [
       res.id,
       res.snippet.title,
-      res.snippet.publishedAt
+      moment(res.snippet.publishedAt).format("YYYY-MM-DD HH:MI:SS")
     ])
   }
 }
