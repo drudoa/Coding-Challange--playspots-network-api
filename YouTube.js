@@ -83,7 +83,7 @@ module.exports = class YouTube {
 
   _formatPlaylistResults(jsonResults) {
     return jsonResults.items.map(res => [
-      res.id,
+      res.snippet.resourceId.videoId,
       res.snippet.title,
       moment(res.snippet.publishedAt).format("YYYY-MM-DD HH:MM:SS")
     ])
