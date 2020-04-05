@@ -6,10 +6,11 @@ This is an entry for a code challage issued by [PlaySports Network](https://www.
 
 Clone this repo and enter its directory. \
 You must provide the following environment variables in a `.env` file or otherwise, before running this project.\
-A Google APi key can be obtained by creating a new **credential** from your [Google Console](https://console.cloud.google.com/apis/credentials) \
+A Google API key can be obtained by creating a new **credential** from your [Google Console](https://console.cloud.google.com/apis/credentials) \I
 You can optionaly restrict your new API key to only have access to `YouTube Data API v3`
 
-**Important!** Your Goolge project you created an API key in **MUST** have a quota allocation for `YouTube Data API v3` in order to work. \
+**Important!**
+Your Goolge project you created an API key in, **MUST** have a quota allocation for `YouTube Data API v3` in order to work. \
 You can check your project quota's [here.](https://console.cloud.google.com/iam-admin/quotas?project)
 
 Environment Variables:
@@ -42,10 +43,10 @@ Now that the project is running you need to populate the database, this can be d
 Get all stored videos (limited to 100 per page) with
 
 ```
-<host-name>:3000/api/videos/<options-page-number>
+<host-name>:3000/api/videos/<optional-page-number>
 ```
 
-You can also search for videos by title by issues a POST request to the same route above with a JSON body of:
+You can also search for videos by title wtih a `POST` request to the same route above with a JSON body of:
 
 ```
 {
@@ -53,7 +54,7 @@ You can also search for videos by title by issues a POST request to the same rou
 }
 ```
 
-Get or Delete a video by its id with GET and POST methods respectively
+Get or Delete a video by its id with `GET` and `DELETE` methods respectively
 
 ```
 <host-name>:3000/api/video/<id>
