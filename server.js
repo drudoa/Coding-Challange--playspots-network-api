@@ -3,6 +3,7 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const { query } = require("./database")
 const YouTube = require("./YouTube")
+const searchFilter = require("./helpers/filter")
 
 const app = express()
 
@@ -13,6 +14,7 @@ const state = {
   error: null
 }
 
+// TODO: move channel info to database
 const channels = [
   {
     name: "GlobalCyclingNetwork",
@@ -48,16 +50,17 @@ app.get("/api/videos/populate", (req, res) => {
   // clear the vidoes table in db
   query("TRUNCATE TABLE `videos`").catch(err => console.error(err))
 
-  // this method is recursive and will take some time
   channels.forEach(channel => {
+    // this method is recursive and will take some time
     api
       .getChannelVideos(channel.playlistId)
-      .then(data => {
+      .then(async data => {
         // filter data by search_filter file
+        const filtered = await searchFilter(data)
 
         // put results into database
         const sql = "INSERT INTO `videos` (id, title, date) VALUES ?"
-        return query(sql, [data])
+        return query(sql, [filtered])
       })
       .catch(err => {
         console.error(err.message)

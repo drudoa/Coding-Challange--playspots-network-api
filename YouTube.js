@@ -12,7 +12,7 @@ module.exports = class YouTube {
   async getChannelVideos(playlistId) {
     if (!playlistId) return null
 
-    // get a playlist id for channel
+    //TODO: get a playlist id for channel
 
     // get all videos in playlist
     const queryParams = {
@@ -52,9 +52,6 @@ module.exports = class YouTube {
     try {
       const result = await fetch(query)
       const json = await result.json()
-
-      // this.count++
-      // console.log({ [this.count]: json.nextPageToken })
 
       return {
         data: this._formatPlaylistResults(json),
