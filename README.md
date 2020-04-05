@@ -6,7 +6,7 @@ This is an entry for a code challage issued by [PlaySports Network](https://www.
 
 Clone this repo and enter its directory. \
 You must provide the following environment variables in a `.env` file or otherwise, before running this project.\
-A Google API key can be obtained by creating a new **credential** from your [Google Console](https://console.cloud.google.com/apis/credentials) \I
+A Google API key can be obtained by creating a new **credential** from your [Google Console](https://console.cloud.google.com/apis/credentials) \
 You can optionaly restrict your new API key to only have access to `YouTube Data API v3`
 
 **Important!**
