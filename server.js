@@ -87,9 +87,14 @@ app.get("/api/videos/populate/status", (req, res) => {
 })
 
 // gets all stored videos
-app.get("/api/videos", (req, res) => {
+app.get("/api/videos/:pageNum?", (req, res) => {
+  const page = req.params.pageNum || 1
+  const offset =
+    Number.isInteger(parseInt(page)) && page > 1 ? (page - 1) * 100 : 0
+
   const sql =
-    "SELECT COUNT(*) AS totalVideos FROM `videos`;SELECT * FROM `videos` LIMIT 100"
+    "SELECT COUNT(*) AS totalVideos FROM `videos`;SELECT * FROM `videos` LIMIT 100 OFFSET " +
+    offset
   query(sql)
     .then(data =>
       res.json({
@@ -101,7 +106,7 @@ app.get("/api/videos", (req, res) => {
 })
 
 // get a stored video by id
-app.get("/api/videos/:id", (req, res) => {
+app.get("/api/video/:id", (req, res) => {
   if (!req.params.id) return res.status(400).json({ message: "invalid id" })
 
   const sql = "SELECT * FROM `videos` WHERE `id` = ?"
