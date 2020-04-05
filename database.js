@@ -18,15 +18,13 @@ connection.connect(err => {
   createDb()
     .then(() => {
       // switch to database
-      connection.changeUser({ database: process.env.MYSQL_DATABASE }, err => {
+      connection.changeUser({ database: "mydb" }, err => {
         if (err) {
           console.error(err)
         }
       })
 
-      console.log(
-        "Successfully switched database to " + process.env.MYSQL_DATABASE
-      )
+      console.log("Successfully switched database to mydb")
     })
     .catch(err => {
       console.log(err)
