@@ -128,7 +128,7 @@ app.post("/api/videos", (req, res) => {
 })
 
 // removes a stored video by id
-app.delete("/api/videos/:id", (req, res) => {
+app.delete("/api/video/:id", (req, res) => {
   if (!req.params.id) return res.status(400).json({ message: "invalid id" })
 
   const sql = "DELETE FROM `videos` WHERE `id` = ?"
